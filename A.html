@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday | Special Edition</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        /* 
+         * 2025 DESIGN SYSTEM 
+         * Theme: Midnight Neon & Glass
+         */
+        :root {
+            --bg-dark: #050507;
+            --accent-primary: #7000df;
+            --accent-secondary: #ff007c;
+            --accent-tertiary: #00f2ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --font-sans: 'Outfit', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow: hidden; /* Controlled by JS */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Animated Mesh Gradient Background */
+        .ambient-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(at 0% 0%, var(--accent-primary) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, var(--accent-secondary) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, var(--accent-tertiary) 0px, transparent 50%);
+            opacity: 0.4;
+            filter: blur(80px);
+            animation: pulseMesh 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseMesh {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(1.1); opacity: 0.6; }
+        }
+
+        /* Main Container for Scenes */
+        #app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* UTILITIES */
+        .hidden { display: none !important; }
+        .fade-out { opacity: 0; transition: opacity 1s ease; pointer-events: none; }
+        .fade-in { opacity: 1; transition: opacity 1.5s ease; }
+        
+        /* SCENE STYLES */
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+            padding: 2rem;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* SCENE 1: INTRO */
+        .enter-btn {
+            padding: 1.5rem 4rem;
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--accent-primary);
+        }
+
+        .enter-subtitle {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* SCENE 2: TYPOGRAPHY */
+        .hero-text {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1.1;
+            font-style: italic;
+            background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 1s ease, opacity 1s ease;
+        }
+        
+        .active .hero-text {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .sub-hero {
+            font-size: 1.2rem;
+            max-width: 600px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+
+        /* SCENE 3: THE CANDLE */
+        .cake-container {
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .candle {
+            width: 30px;
+            height: 120px;
+            background: linear-gradient(#eee, #ccc);
+            border-radius: 4px;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: inset -5px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .flame {
+            width: 20px;
+            height: 35px;
+            background: radial-gradient(ellipse at bottom, #ffeb3b 0%, #ff9800 50%, rgba(255,87,34,0) 100%);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 0.1s infinite alternate;
+            filter: drop-shadow(0 0 10px #ff9800);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .flame:hover {
+            transform: translateX(-50%) scale(1.2);
+        }
+
+        .flame.extinguished {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.1);
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) skewX(-2deg); opacity: 0.9; }
+            100% { transform: translateX(-50%) skewX(2deg); opacity: 1; }
+        }
+
+        .instruction-pill {
+            margin-top: 4rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* SCENE 4: FINAL CARD */
+        .card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 2rem;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .active .card {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .polaroid {
+            width: 100%;
+            height: 250px;
+            background: #1a1a1a; /* Placeholder for image */
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wish-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        /* Canvas for Confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .equalizer-bar {
+            width: 3px;
+            background: var(--accent-tertiary);
+            margin: 0 1px;
+            animation: equalizer 1s infinite;
+        }
+        
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 15px; }
+        .equalizer-bar:nth-child(1), .equalizer-bar:nth-child(3) { height: 10px; }
+
+        @keyframes equalizer {
+            0%, 100% { height: 5px; }
+            50% { height: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-mesh"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- AUDIO PLAYER -->
+    <!-- CHANGE THIS: Replace src with a link to their favorite song (mp3) -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-control" onclick="toggleMusic()">
+        <div class="equalizer-bar"></div>
+        <div class="equalizer-bar"></div>
+        <div class="equalizer-bar"></div>
+    </div>
+
+    <div id="app">
+        
+        <!-- SCENE 1: INTRODUCTION -->
+        <div class="scene active" id="scene-1">
+            <h1 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 2rem; color: var(--text-muted);">
+                A Special Moment
+            </h1>
+            <button class="enter-btn" onclick="nextScene()">Begin Journey</button>
+            <div class="enter-subtitle">Please enable sound</div>
+        </div>
+
+        <!-- SCENE 2: THE MESSAGE -->
+        <div class="scene" id="scene-2">
+            <!-- CHANGE THIS: The Headline -->
+            <h1 class="hero-text">Another Year <br> More Extraordinary</h1>
+            <!-- CHANGE THIS: The Subtext -->
+            <p class="sub-hero">
+                The world changed the day you arrived.<br>
+                Today isn't just a date on the calendar, it's a celebration of you.
+            </p>
+            <button class="enter-btn" style="padding: 1rem 2rem; font-size: 0.9rem;" onclick="nextScene()">Continue</button>
+        </div>
+
+        <!-- SCENE 3: THE INTERACTION -->
+        <div class="scene" id="scene-3">
+            <h2 style="font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 1rem;">Make a Wish</h2>
+            
+            <div class="cake-container">
+                <div class="candle">
+                    <div class="flame" id="flame" onclick="blowCandle()"></div>
+                </div>
+            </div>
+
+            <div class="instruction-pill">Tap the flame to blow it out</div>
+        </div>
+
+        <!-- SCENE 4: GRAND FINALE -->
+        <div class="scene" id="scene-4">
+            <div class="card">
+                <div class="polaroid">
+                    <!-- CHANGE THIS: Put an actual image URL here -->
+                    <!-- Example: <img src="your-photo.jpg" /> -->
+                    <div style="text-align:center; color:#fff;">
+                        <span style="font-size: 3rem;">🎉</span>
+                    </div>
+                </div>
+                <!-- CHANGE THIS: The Final Message -->
+                <h2 style="margin-bottom: 1rem; color: var(--accent-primary);">Happy Birthday!</h2>
+                <p class="wish-text">"May your year be as stunning, brilliant, and kind as your soul."</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2rem;">With all my love,</p>
+                <p style="font-size: 0.9rem; font-weight: bold; margin-top: 0.5rem;">[Your Name]</p>
+            </div>
+            <button class="enter-btn" style="margin-top: 2rem; padding: 1rem 2rem; font-size: 0.8rem;" onclick="restart()">Replay</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- LOGIC SYSTEM ---
+        let currentScene = 1;
+        const totalScenes = 4;
+        const music = document.getElementById('bg-music');
+        const flame = document.getElementById('flame');
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+
+        // Set Canvas Size
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+
+        function nextScene() {
+            // Hide current
+            document.getElementById(`scene-${currentScene}`).classList.remove('active');
+            
+            // Logic for specific transitions
+            if(currentScene === 1) {
+                // Try to play music on first interaction
+                music.volume = 0.5;
+                music.play().catch(e => console.log("Audio autoplay blocked"));
+            }
+
+            // Increment
+            currentScene++;
+            
+            // Show next
+            if(currentScene <= totalScenes) {
+                setTimeout(() => {
+                    document.getElementById(`scene-${currentScene}`).classList.add('active');
+                }, 500); // Wait for fade out
+            }
+        }
+
+        // --- INTERACTIVE CANDLE ---
+        function blowCandle() {
+            if(flame.classList.contains('extinguished')) return;
+            
+            flame.classList.add('extinguished');
+            
+            // Play a soft wind sound (optional, simulating via logic here)
+            // Immediately trigger confetti
+            startConfetti();
+            
+            // Wait 2 seconds then go to final scene
+            setTimeout(() => {
+                nextScene();
+            }, 2000);
+        }
+
+        function restart() {
+            currentScene = 1;
+            // Reset Candle
+            flame.classList.remove('extinguished');
+            // Hide all
+            document.querySelectorAll('.scene').forEach(el => el.classList.remove('active'));
+            // Show first
+            document.getElementById('scene-1').classList.add('active');
+            // Stop confetti
+            confettiActive = false;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+        }
+
+        function toggleMusic() {
+            if(music.paused) {
+                music.play();
+                document.querySelectorAll('.equalizer-bar').forEach(b => b.style.animationPlayState = 'running');
+            } else {
+                music.pause();
+                document.querySelectorAll('.equalizer-bar').forEach(b => b.style.animationPlayState = 'paused');
+            }
+        }
+
+        // --- CONFETTI ENGINE (Lightweight) ---
+        let particles = [];
+        let confettiActive = false;
+
+        function createParticle() {
+            const colors = ['#7000df', '#ff007c', '#00f2ff', '#ffffff'];
+            return {
+                x: Math.random() * confettiCanvas.width,
+                y: -10, // Start above screen
+                size: Math.random() * 5 + 2,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speedY: Math.random() * 3 + 2,
+                speedX: Math.random() * 2 - 1,
+                rotation: Math.random() * 360,
+                rotationSpeed: Math.random() * 5 - 2
+            };
+        }
+
+        function startConfetti() {
+            confettiActive = true;
+            for(let i=0; i<100; i++) {
+                particles.push(createParticle());
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            if (!confettiActive && particles.length === 0) return;
+
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            particles.forEach((p, index) => {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotationSpeed;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+
+                // Reset particle if it falls off screen (for continuous effect)
+                if (p.y > confettiCanvas.height) {
+                    if (confettiActive) {
+                        particles[index] = createParticle();
+                    } else {
+                        particles.splice(index, 1);
+                    }
+                }
+            });
+
+            if (confettiActive || particles.length > 0) {
+                requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        // Responsive Canvas
+        window.addEventListener('resize', () => {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>
